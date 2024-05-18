@@ -6,11 +6,28 @@
 
 <script>
 import MyComponent from './components/ConnectWallet.vue';
+import {rentRoom, createRoom} from './contractUtils'; 
 
 export default {
   name: 'App',
   components: {
     MyComponent
+  },
+  methods: {
+    async createRoomMethod() {
+      try {
+        this.message = await createRoom();
+      } catch (error) {
+        console.error('Error fetching message 1:', error);
+      }
+    },
+    async rentRoomMethod() {
+      try {
+        this.message = await rentRoom();
+      } catch (error) {
+        console.error('Error fetching message 2:', error);
+      }
+    }
   }
 }
 </script>
@@ -18,3 +35,4 @@ export default {
 <style>
 /* CSS 样式 */
 </style>
+
