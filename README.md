@@ -22,3 +22,12 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Compile your contract
+npx hardhat compile
+
+### Deploy your constract
+npx hardhat run scripts/deploy.js --network scrollTestnet
+
+### Events contained in .env
+
