@@ -1,21 +1,17 @@
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./IRoom.sol";
+
+interface IRoomNFT {
+    function mintNFT(address recipient, string memory tokenURI) external returns (uint256);
+}
 
 contract RoomNFT1 is ERC721URIStorage, Ownable, IRoomNFT {
     uint256 private _tokenIds;
 
-    uint256 private roomId;
-    address private landlord;
-
-    constructor(address initialOwner, uint256 _roomId, address _landlord) ERC721("RoomNFT", "RNFT") Ownable(initialOwner) {
-        roomId = _roomId;
-        landlord = _landlord;
-    }
+    constructor() ERC721("RoomNFT", "RNFT") Ownable(msg.sender) {}
 
     function mintNFT(address recipient, string memory tokenURI) external override onlyOwner returns (uint256) {
         _tokenIds += 1;
@@ -24,17 +20,9 @@ contract RoomNFT1 is ERC721URIStorage, Ownable, IRoomNFT {
         _setTokenURI(newItemId, tokenURI);
         return newItemId;
     }
-
-    function getRoomId() external view returns (uint256) {
-        return roomId;
-    }
-
-    function getLandlord() external view returns (address) {
-        return landlord;
-    }
 }
 
-contract Room1 is IRoom {
+contract Room1 {
     using Address for address;
 
     uint256 private id;
@@ -45,39 +33,39 @@ contract Room1 is IRoom {
     address private systemAccount;
     IRoomNFT private nftContract;
 
-    constructor(uint256 _id, uint256 _price, address _landlord, address _systemAccount, address nftContractAddress) {
+    constructor(uint256 _id, uint256 _price, address _landlord, address _systemAccount) {
         id = _id;
         price = _price;
         landlord = _landlord;
         rented = false;
         systemAccount = _systemAccount;
-        nftContract = IRoomNFT(nftContractAddress);
+
+        // 创建 RoomNFT 合约
+        nftContract = new RoomNFT1();
     }
 
-    function getId() external view override returns (uint256) {
+    function getId() external view returns (uint256) {
         return id;
     }
 
-    function getPrice() external view override returns (uint256) {
+    function getPrice() external view returns (uint256) {
         return price;
     }
 
-    function getLandlord() external view override returns (address) {
+    function getLandlord() external view returns (address) {
         return landlord;
     }
 
-    function getCurrentTenant() external view override returns (address) {
+    function getCurrentTenant() external view returns (address) {
         return currentTenant;
     }
 
-    function isRented() external view override returns (bool) {
+    function isRented() external view returns (bool) {
         return rented;
     }
 
-    function rentRoom(uint256 roomId, uint256 _price, uint256 startDate, uint256 endDate) external payable override {
-        require(roomId == id, "Invalid room ID");
+    function rentRoom(uint256 _id, uint256 _price, uint256 startDate, uint256 endDate) external payable {
         require(!rented, "Room is already rented");
-        require(startDate < endDate, "Invalid rental period");
         require(msg.value == _price * 105 / 100, "Incorrect payment amount");
         require(address(msg.sender).balance >= msg.value, "Insufficient balance");
 
@@ -102,8 +90,13 @@ contract Room1 is IRoom {
         ));
 
         // 生成NFT并转移给租客
-        nftContract.mintNFT(msg.sender, tokenURI);
+        uint256 nftId = nftContract.mintNFT(msg.sender, tokenURI);
+
+        // 触发事件，将 NFT 关联到房间
+        emit NFTCreated(_id, nftId);
     }
+
+    event NFTCreated(uint256 indexed roomId, uint256 indexed nftId);
 
     function uint2str(uint256 _i) internal pure returns (string memory) {
         if (_i == 0) {
