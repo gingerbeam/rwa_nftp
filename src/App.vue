@@ -6,13 +6,12 @@
 
 <script>
 import MyComponent from './components/ConnectWallet.vue';
-// import {rentRoom, createRoom} from './contractUtils'; 
 
 export default {
   name: 'App',
   components: {
     MyComponent
-  },
+  }
   // methods: {
   //   async createRoomMethod() {
   //     try {

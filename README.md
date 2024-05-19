@@ -59,7 +59,7 @@ npx hardhat run scripts/deploy.js --network scrollTestnet
 npx hardhat console --network scrollTestnet
 // 输入
 const MyContract = await ethers.getContractFactory("Router");
-const myContract = await MyContract.attach("<合约地址>");
+const myContract = await MyContract.attach("0xEA6BD948042645C92e6b9b00766FF9c75B476465"); # 合约地址
 
 const roomId = 111;
 const price = 1111;
