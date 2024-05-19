@@ -32,6 +32,7 @@
 
 <script>
 import enableEthereum from '@/utils/web3';
+import { rentRoom, createRoom } from './contractUtils';
 
 export default {
   data() {
@@ -75,15 +76,26 @@ export default {
       this.showModal = false;  // 关闭弹窗
     },
 
-    confirmRent() {
+    async confirmRent() {
       // 在这里处理确认租赁的逻辑
       // 可以使用this.selectedItemIndex和this.startDate、this.endDate来获取用户选择的物品索引、租赁起止日期
       if (this.selectedItemIndex !== null && this.startDate && this.endDate) {
         const item = this.images[this.selectedItemIndex];
+        const roomAddress = "0xaa"
         const price = item.price;
         const days = (new Date(this.endDate) - new Date(this.startDate)) / (1000 * 60 * 60 * 24);
         this.totalCost = price * days;
-        this.showModal = false;  // 关闭弹窗
+        const startDateUnix = Math.floor(new Date(this.startDate).getTime() / 1000);
+        const endDateUnix = Math.floor(new Date(this.endDate).getTime() / 1000);
+
+        try {
+          const response = await rentRoom(roomAddress, roomId, this.totalCost, startDateUnix, endDateUnix);
+          // const response = await rentRoom(this.accountAddress, startDateUnix, endDateUnix);
+          console.log('Rent Room Response:', response);
+          this.showModal = false;  // 关闭弹窗
+        } catch (error) {
+          console.error('Error renting room:', error);
+        }
       }
     }
   },
