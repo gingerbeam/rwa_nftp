@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Address.sol";
@@ -64,7 +65,7 @@ contract Room1 {
         return rented;
     }
 
-    function rentRoom(uint256 _id, uint256 _price, uint256 startDate, uint256 endDate) external payable {
+    function rentRoom(uint256 _id, uint256 _price, uint256 startDate, uint256 endDate) external payable returns (uint256 nftId) {
         require(!rented, "Room is already rented");
         require(msg.value == _price * 105 / 100, "Incorrect payment amount");
         require(address(msg.sender).balance >= msg.value, "Insufficient balance");
@@ -90,10 +91,12 @@ contract Room1 {
         ));
 
         // 生成NFT并转移给租客
-        uint256 nftId = nftContract.mintNFT(msg.sender, tokenURI);
+        nftId = nftContract.mintNFT(msg.sender, tokenURI);
 
         // 触发事件，将 NFT 关联到房间
         emit NFTCreated(_id, nftId);
+
+        return nftId;
     }
 
     event NFTCreated(uint256 indexed roomId, uint256 indexed nftId);

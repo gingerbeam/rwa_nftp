@@ -20,9 +20,10 @@ contract Router {
         uint256 price,
         uint256 startDate,
         uint256 endDate
-    ) external payable {
+    ) external payable returns (uint256 rentResult) {
         Room1 room = Room1(roomAddress);
-        room.rentRoom{value: msg.value}(roomId, price, startDate, endDate);
+        rentResult = room.rentRoom{value: msg.value}(roomId, price, startDate, endDate);
+        return rentResult;
     }
 
     function createRoom(
