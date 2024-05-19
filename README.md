@@ -1,6 +1,10 @@
 # NomadBnB (previously rwa_nftp)
 
+## Introduction
+
 ![NomadBnB LOGO](./logo.jpg "NomadBnB")
+
+NomadBnB is a prototype implementation of our eco-system for digital nomads, which is proposed in ETH Beijing Hackthon 2024.
 
 ## 前端
 ```
@@ -70,3 +74,6 @@ const landlord = <你的钱包地址>;
 const message = await myContract.createRoom(roomId, price, landlord);
 console.log(message);
 ```
+
+## 持续开发
+This is a very primary and buggy implementation finished during ETH Beijing Hackthon 2024 (up to commit a882b2e). We have streamlined the logic architecture and details of the contracts, and the demo version implemented differs significantly from our requirements and design documents. The purpose of our ongoing development is to optimize the contract details and the front & back-end implementations, to complete a project that can fully reflect the ideas we have proposed.
