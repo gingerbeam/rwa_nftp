@@ -1,4 +1,6 @@
-# rwa_nftp
+# NomadBnB (previously rwa_nftp)
+
+![NomadBnB LOGO](./logo.jpg "NomadBnB")
 
 ## 前端
 ```
