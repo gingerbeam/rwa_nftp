@@ -6,6 +6,7 @@
     <div v-if="connected" class="account-info">
       <p class="address">Address: {{ accountAddress }}</p>
       <p class="balance">FT Balance: {{ ftBalance }} FT</p>
+      <button @click="publishRoom">发布房源</button>
     </div>
     <div class="product-gallery">
       <div v-for="(item, index) in images" :key="index" class="product-item">
@@ -81,20 +82,44 @@ export default {
       // 可以使用this.selectedItemIndex和this.startDate、this.endDate来获取用户选择的物品索引、租赁起止日期
       if (this.selectedItemIndex !== null && this.startDate && this.endDate) {
         const item = this.images[this.selectedItemIndex];
-        const roomAddress = "0xaa"
-        const price = item.price;
+        // fake info for now temporarily
+        const roomId = this.selectedItemIndex;
+        const roomAddress = "0xaa";
         const days = (new Date(this.endDate) - new Date(this.startDate)) / (1000 * 60 * 60 * 24);
-        this.totalCost = price * days;
+        this.totalCost = item.price * days;
         const startDateUnix = Math.floor(new Date(this.startDate).getTime() / 1000);
         const endDateUnix = Math.floor(new Date(this.endDate).getTime() / 1000);
 
         try {
           const response = await rentRoom(roomAddress, roomId, this.totalCost, startDateUnix, endDateUnix);
-          // const response = await rentRoom(this.accountAddress, startDateUnix, endDateUnix);
           console.log('Rent Room Response:', response);
           this.showModal = false;  // 关闭弹窗
         } catch (error) {
           console.error('Error renting room:', error);
+        }
+      }
+    },
+
+    // ！！！这个函数没有写完，和上面的button逻辑对不上！！！
+    async publishRoom() {
+      // 在这里处理确认租赁的逻辑
+      // 可以使用this.selectedItemIndex和this.startDate、this.endDate来获取用户选择的物品索引、租赁起止日期
+      if (this.selectedItemIndex !== null && this.startDate && this.endDate) {
+        const item = this.images[this.selectedItemIndex];
+        // fake info for now temporarily
+        const roomId = this.selectedItemIndex;
+        const landlord = "0xaa";
+        const days = (new Date(this.endDate) - new Date(this.startDate)) / (1000 * 60 * 60 * 24);
+        this.totalCost = item.price * days;
+        const startDateUnix = Math.floor(new Date(this.startDate).getTime() / 1000);
+        const endDateUnix = Math.floor(new Date(this.endDate).getTime() / 1000);
+
+        try {
+          const response = await createRoom(roomId, this.totalCost, landlord);
+          console.log('Create Room Response:', response);
+          this.showModal = false;  // 关闭弹窗
+        } catch (error) {
+          console.error('Error creating room:', error);
         }
       }
     }
